@@ -23,6 +23,21 @@ const routes = [
         name: '/admin/product/product_list',
         component: () => import('../views/product/product_list.vue')
       },
+      {
+        path: '/admin/product/product_attr',
+        name: '/admin/product/product_attr',
+        component: () => import('../views/product/product_attr.vue')
+      },
+      {
+        path: '/admin/product/product_classify',
+        name: '/admin/product/product_classify',
+        component: () => import('../views/product/product_classify.vue')
+      },
+      {
+        path: '/admin/product/product_reply',
+        name: '/admin/product/product_reply',
+        component: () => import('../views/product/product_reply.vue')
+      },
 
     ]
   },
