@@ -8,7 +8,20 @@
         :name="String(v.type)"
       >
         <div class="tou">
-          商品分类:<el-select v-model="value" clearable placeholder="请选择">
+          商品分类:
+          <el-select
+            v-model="value"
+            clearable
+            placeholder="请选择"
+            @change="xiala"
+          >
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.cate_name"
+            >
+            </el-option>
           </el-select>
           商品搜索：<input type="text" v-model="searchbox" /><button
             @click="sou"
@@ -44,8 +57,8 @@
           <el-table-column label="状态">
             <template slot-scope="props">
               <el-switch
-                v-model="props.row.is_show"
-                @change="huan(props.row.id, props.row.is_show)"
+                :value="Boolean(props.row.is_show)"
+                @change="huan(props.row.id, !Boolean(props.row.is_show))"
               >
               </el-switch>
             </template>
@@ -78,7 +91,13 @@
 </template>
 
 <script>
-import { gettype_header, getproduct, getset_show, getdel } from "@/api";
+import {
+  gettype_header,
+  getproduct,
+  gettree,
+  getset_show,
+  getdel,
+} from "@/api";
 export default {
   data() {
     return {
@@ -91,12 +110,17 @@ export default {
       page: 1,
       limit: 10,
       value: "",
+      options: [],
     };
   },
   created() {
     gettype_header().then((res) => {
       console.log(res);
       this.list = res.data.list;
+    });
+    gettree().then((res) => {
+      console.log(res);
+      this.options = res.data;
     });
     getproduct({
       page: this.page,
@@ -131,11 +155,49 @@ export default {
         console.log(this.data);
       });
     },
+    xiala() {
+      let num = 0;
+      this.options.forEach((v) => {
+        if (this.value == v.cate_name) {
+          num = v.id;
+        }
+      });
+      getproduct({
+        page: this.page,
+        limit: this.limit,
+        cate_id: num,
+        type: Number(this.activeName),
+        store_name: this.searchbox,
+        excel: 0,
+        sales: "asc",
+      }).then((res) => {
+        this.data = res.data.list;
+        this.total = res.data.count;
+        console.log(this.data);
+      });
+    },
     huan(id, isshow) {
       console.log(id);
       console.log(isshow);
       getset_show({ id: id, is_show: Number(isshow) }).then((res) => {
         console.log(res);
+        gettype_header().then((res) => {
+          console.log(res);
+          this.list = res.data.list;
+        });
+        getproduct({
+          page: this.page,
+          limit: this.limit,
+          cate_id: 0,
+          type: Number(this.activeName),
+          store_name: this.searchbox,
+          excel: 0,
+          sales: "asc",
+        }).then((res) => {
+          this.data = res.data.list;
+          this.total = res.data.count;
+          console.log(this.data);
+        });
       });
     },
     sou() {

@@ -39,6 +39,12 @@ export function getproduct(val) {
         params: val
     })
 }
+export function gettree() {
+    return http({
+        url: "adminapi/product/category/tree/1",
+        method: "get"
+    })
+}
 
 export function getset_show(val) {
     return http({
@@ -52,4 +58,17 @@ export function getdel(val) {
         url: "/adminapi/product/product/" + val.id,
         method: "DELETE",
     })
+}
+
+// 商品分类
+
+export function getcategory(val) {
+    return http({
+        url: "/adminapi/product/category",
+        method: "get",
+        params: val
+    })
+}
+export function getset_show2(val) {
+    return http.put("/adminapi/product/category/set_show/" + val.id + "/" + val.isShow)
 }
