@@ -72,8 +72,20 @@
                 >查看</el-button
               >
               <el-button type="text" size="small">编辑</el-button>
-              <el-button type="text" size="small" @click="huishou(scope.row)"
+
+              <el-button
+                v-if="Number(activeName) !== 6"
+                type="text"
+                size="small"
+                @click="huishou(scope.row)"
                 >移到回收站</el-button
+              >
+              <el-button
+                v-else
+                type="text"
+                size="small"
+                @click="huishou(scope.row)"
+                >恢复商品</el-button
               >
             </template>
           </el-table-column>
@@ -141,6 +153,7 @@ export default {
       console.log(`当前页: ${val}`);
     },
     activeNameClick() {
+      console.log(Number(this.activeName));
       getproduct({
         page: this.page,
         limit: this.limit,
@@ -214,9 +227,47 @@ export default {
         console.log(this.data);
       });
     },
-    huishou(id) {
-      getdel({ id: id }).then((res) => {
+    huishou(val) {
+      console.log(val.id);
+      getdel(val.id).then((res) => {
         console.log(res);
+        gettype_header().then((res) => {
+          console.log(res);
+          this.list = res.data.list;
+        });
+        getproduct({
+          page: this.page,
+          limit: this.limit,
+          cate_id: 0,
+          type: Number(this.activeName),
+          store_name: this.searchbox,
+          excel: 0,
+          sales: "asc",
+        }).then((res) => {
+          this.data = res.data.list;
+          console.log(this.data);
+        });
+      });
+    },
+    huifu(val) {
+      getdel(val.id).then((res) => {
+        console.log(res);
+        gettype_header().then((res) => {
+          console.log(res);
+          this.list = res.data.list;
+        });
+        getproduct({
+          page: this.page,
+          limit: this.limit,
+          cate_id: 0,
+          type: Number(this.activeName),
+          store_name: this.searchbox,
+          excel: 0,
+          sales: "asc",
+        }).then((res) => {
+          this.data = res.data.list;
+          console.log(this.data);
+        });
       });
     },
   },
